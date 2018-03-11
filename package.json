@@ -15,8 +15,10 @@
   "license": "ISC",
   "devDependencies": {
     "@types/body-parser": "^1.16.8",
+    "@types/config": "0.0.34",
     "@types/express": "^4.11.1",
     "@types/node": "^8.9.5",
+    "@types/q": "^1.0.7",
     "@types/source-map-support": "^0.4.0",
     "grunt": "^1.0.2",
     "grunt-contrib-clean": "^1.1.0",
@@ -25,9 +27,13 @@
   },
   "dependencies": {
     "@types/log4js": "^2.3.5",
+    "Q": "^1.0.0",
+    "aws-sdk": "^2.207.0",
     "body-parser": "^1.18.2",
+    "config": "^1.30.0",
     "express": "^4.16.2",
     "log4js": "^2.5.3",
+    "proxy-agent": "^2.2.0",
     "source-map-support": "^0.5.3"
   }
 }

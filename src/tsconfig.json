@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "target": "es2017",
+        "sourceMap": true,
+        "allowJs": true,
+        "module": "commonjs",
+        "outDir": "../bin",
+    }
+}
