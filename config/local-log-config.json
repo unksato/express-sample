@@ -1,0 +1,28 @@
+{
+    "appenders": {
+        "console": {
+            "type": "console"
+        }
+    },
+    "categories": {
+        "application": {
+            "appenders": [
+                "console"
+            ],
+            "level": "debug"
+        },
+        "access": {
+            "appenders": [
+                "console"
+            ],
+            "level": "info"
+        },
+        "default": {
+            "appenders": [
+                "console"
+            ],
+            "level": "info"
+        }
+    },
+    "replaceConsole": true
+}
