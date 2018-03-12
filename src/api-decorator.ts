@@ -1,16 +1,16 @@
 
 import * as express from 'express';
-
-export abstract class AbstractApi {
-    private static _router = express.Router();
-}
+import * as Q from 'q'
 
 export module Server {
 
+    let d = Q.defer<void>();
+
     export let Api = (parser?: Function) => {
         return (clazz: any) => {
-            module.parent.exports.routor = clazz._router;
-            module.parent.exports.parser = parser;
+            clazz.parser = parser;
+            clazz.router = express.Router();
+            d.resolve();
         }
     }
 
@@ -67,7 +67,9 @@ export module Server {
         };
 
         let _addRoute = (method: string, target: any, descriptor: PropertyDescriptor, path: string) => {
-            target._router.route(path)[method](descriptor.value);
+            d.promise.then(()=>{
+                target.router.route(path)[method](descriptor.value);
+            });
         };
     }
 }

@@ -37,11 +37,13 @@ export class Server {
             } else {
                 if (targetPath.indexOf('.js', targetPath.length - '.js'.length) != -1) {
                     import(targetPath).then((m) => {
-                        if (m.routor) {
+                        if (m.default.router) {
                             logger.info(`API module loading: ${targetPath}`);
-                            let handlers = this._createHandlers(require(targetPath).parser, restrictHandler);
-                            handlers.push(require(targetPath).routor);
+                            let handlers = this._createHandlers(m.default.parser, restrictHandler);
+                            handlers.push(m.default.router);
                             this._server.use('/api/', handlers);
+                        }else{
+                            logger.error(`Router not found: ${targetPath}`);
                         }
                     }).catch((err) => {
                         logger.error(err);

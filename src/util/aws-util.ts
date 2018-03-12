@@ -16,7 +16,7 @@ export class AwsUtil {
             this._REGION = region;
         }
 
-        aws.config.update(<aws.Config>{
+        aws.config.update({
             accessKeyId: this._ACCESS_KEY_ID,
             secretAccessKey: this._SECRET_ACCESS_KEY,
             region: this._REGION

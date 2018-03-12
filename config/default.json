@@ -1,1 +1,10 @@
-{}
+{
+    "aws": {
+        "region": "us-west-2",
+        "accessKeyId": "myKeyId",
+        "secretKey": "secretkey",
+        "dynamo": {
+            "endpoint": "http://localhost:7777"
+        }
+    }    
+}

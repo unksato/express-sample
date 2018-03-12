@@ -5,9 +5,28 @@ import * as Q from 'q'
 export class DynamoDBUtil<TABLE_SCHEMA> extends AwsUtil {
     protected _docClient: aws.DynamoDB.DocumentClient;
 
-    constructor(accessKeyId: string, secretKey: string, region?: string) {
+    constructor(accessKeyId: string, secretKey: string, region?: string, endpoint?: string) {
         super(accessKeyId, secretKey, region);
+
+        if (endpoint) {
+            aws.config.update(<any>{endpoint: endpoint})
+        }
+
         this._docClient = new aws.DynamoDB.DocumentClient();
+    }
+
+    public put(params: aws.DynamoDB.DocumentClient.PutItemInput): Q.Promise<aws.DynamoDB.DocumentClient.PutItemOutput> {
+        let d = Q.defer<aws.DynamoDB.DocumentClient.PutItemOutput>();
+
+        this._docClient.put(params, (err, data) => {
+            if (err) {
+                d.reject(err);
+            }else{
+                d.resolve(data);
+            }
+        })
+
+        return d.promise;
     }
 
     public query(params: aws.DynamoDB.DocumentClient.QueryInput): Q.Promise<TABLE_SCHEMA[]> {

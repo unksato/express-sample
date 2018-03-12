@@ -1,10 +1,10 @@
 
-import { Server, AbstractApi } from '../abstract-api';
+import { Server } from '../api-decorator';
 import * as bodyparser from 'body-parser'
 import * as express from 'express';
 
 @Server.Api(bodyparser.json())
-class Sample extends AbstractApi {
+export default class Sample {
 
     @Server.Route.GET('/sample')
     static getHello(req: express.Request, res: express.Response) {
