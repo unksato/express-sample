@@ -6,5 +6,6 @@
         "dynamo": {
             "endpoint": "AWS_DYNAMO_ENDPOINT"
         }
-    }
+    },
+    "secret": "TOKEN_SECRET"
 }

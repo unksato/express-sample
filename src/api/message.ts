@@ -82,5 +82,4 @@ export default class Message {
             res.status(400).send("Bad Request")
         }
     }
-
 }

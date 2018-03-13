@@ -6,5 +6,6 @@
         "dynamo": {
             "endpoint": "http://localhost:7777"
         }
-    }    
+    },
+    "secret": "secret"
 }

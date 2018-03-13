@@ -15,6 +15,20 @@ export class DynamoDBUtil<TABLE_SCHEMA> extends AwsUtil {
         this._docClient = new aws.DynamoDB.DocumentClient();
     }
 
+    public get(params: aws.DynamoDB.DocumentClient.GetItemInput): Q.Promise<TABLE_SCHEMA> {
+        let d = Q.defer<TABLE_SCHEMA>();
+
+        this._docClient.get(params, (err, data) => {
+            if (err) {
+                d.reject(err);
+            }else{
+                d.resolve(<TABLE_SCHEMA>data.Item);
+            }
+        })
+
+        return d.promise;
+    }
+
     public put(params: aws.DynamoDB.DocumentClient.PutItemInput): Q.Promise<aws.DynamoDB.DocumentClient.PutItemOutput> {
         let d = Q.defer<aws.DynamoDB.DocumentClient.PutItemOutput>();
 
