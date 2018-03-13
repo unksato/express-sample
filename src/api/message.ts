@@ -4,6 +4,7 @@ import * as express from 'express';
 import { DynamoDBUtil } from '../util/dynamodb-util'
 import * as config from 'config'
 import * as aws from 'aws-sdk'
+import * as url from 'url'
 
 declare module Dynamo.Schema {
     export interface IMessage {
@@ -17,6 +18,8 @@ declare module Dynamo.Schema {
 export default class Message {
 
     static TABLE_NAME = "Messages";
+    static TICKET_EXPIRE = 10;
+
     static dynamoClient = new DynamoDBUtil<Dynamo.Schema.IMessage>(
         config.get("aws.accessKeyId"),
         config.get("aws.secretKey"),
@@ -31,11 +34,25 @@ export default class Message {
     @Server.Route.GET('/messages/:publisherId')
     static getPublisherMessages(req: express.Request, res: express.Response) {
 
+        let query = url.parse(req.url, true).query;
+
         let params: aws.DynamoDB.DocumentClient.QueryInput = {
             TableName: Message.TABLE_NAME,
             KeyConditionExpression: 'publisherId = :publisherId',
             ExpressionAttributeValues: {':publisherId': req.params.publisherId}
         }
+
+        let tickets = query.ticket ? Array.isArray(query.ticket) ? query.ticket : [query.ticket] : [];
+        let ticketCondition = '';
+        for (let i in tickets) {
+            if (ticketCondition)
+                ticketCondition = ticketCondition + ' OR ';
+            ticketCondition = ticketCondition + `(publishedAt >= :ticket_${i} AND publishedAt < :ticket_expire_${i})`;
+            params.ExpressionAttributeValues[`:ticket_${i}`] = Number(tickets[i]);
+            params.ExpressionAttributeValues[`:ticket_expire_${i}`] = Number(tickets[i]) + Message.TICKET_EXPIRE;
+        }
+        if (ticketCondition)
+            params.FilterExpression = ticketCondition;
 
         Message.dynamoClient.query(params).then((datas)=>{
             res.send(datas);
@@ -51,7 +68,7 @@ export default class Message {
                 TableName: Message.TABLE_NAME,
                 Item: {
                     "publisherId": req.body.publisherId,
-                    "publishedAt": new Date().getTime(),
+                    "publishedAt": (req.body.publishedAt ? new Date(req.body.publishedAt) : new Date()).getTime(),
                     "message": req.body.message
                 }
             };
