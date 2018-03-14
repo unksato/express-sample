@@ -5,9 +5,11 @@ import { DynamoDBUtil } from '../util/dynamodb-util'
 import * as config from 'config'
 import * as aws from 'aws-sdk'
 import * as url from 'url'
+import * as uuid from 'uuid/v4'
 
 declare module Dynamo.Schema {
     export interface IMessage {
+        messageId: string,
         publisherId: string,
         message: string,
         publishedAt: number,
@@ -34,15 +36,16 @@ export default class Message {
     @Server.Route.GET('/messages/:publisherId')
     static getPublisherMessages(req: express.Request, res: express.Response) {
 
-        let query = url.parse(req.url, true).query;
-
         let params: aws.DynamoDB.DocumentClient.QueryInput = {
             TableName: Message.TABLE_NAME,
+            IndexName: 'index_publisher_date',
             KeyConditionExpression: 'publisherId = :publisherId',
             ExpressionAttributeValues: {':publisherId': req.params.publisherId}
         }
 
-        let tickets = query.ticket ? Array.isArray(query.ticket) ? query.ticket : [query.ticket] : [];
+        // グローバルセカンダリインデックスを使ったQueryオペレーションではRANGEキーだけの指定になってしまうので、ダメっぽい
+        // これを回避するにはScanオペレーションにする必要があるのだが...
+        let tickets = req.user.tickets ? Array.isArray(req.user.tickets) ? req.user.tickets : [req.user.tickets] : [];
         let ticketCondition = '';
         for (let i in tickets) {
             if (ticketCondition)
@@ -67,6 +70,7 @@ export default class Message {
             let params: aws.DynamoDB.DocumentClient.PutItemInput = {
                 TableName: Message.TABLE_NAME,
                 Item: {
+                    "messageId": uuid(),
                     "publisherId": req.body.publisherId,
                     "publishedAt": (req.body.publishedAt ? new Date(req.body.publishedAt) : new Date()).getTime(),
                     "message": req.body.message

@@ -12,16 +12,33 @@ var dynamodb = new AWS.DynamoDB();
 var messagesTable = {
     TableName: "Messages",
     KeySchema: [
-        { AttributeName: "publisherId", KeyType: "HASH" },
+        { AttributeName: "messageId", KeyType: "HASH" },
         { AttributeName: "publishedAt", KeyType: "RANGE" }
     ],
     AttributeDefinitions: [
+        { AttributeName: "messageId", AttributeType: "S" },
         { AttributeName: "publisherId", AttributeType: "S" },
         { AttributeName: "publishedAt", AttributeType: "N" }
     ],
+    GlobalSecondaryIndexes: [
+        {
+            IndexName: "index_publisher_date",
+            KeySchema: [
+                { AttributeName: "publisherId", KeyType: "HASH" },
+                { AttributeName: "publishedAt", KeyType: "RANGE" }
+            ],
+            Projection: {
+                ProjectionType: "KEYS_ONLY"
+            },
+            ProvisionedThroughput: {
+                ReadCapacityUnits: 1,
+                WriteCapacityUnits: 1
+            }
+        }
+    ],
     ProvisionedThroughput: {
-        ReadCapacityUnits: 10,
-        WriteCapacityUnits: 10
+        ReadCapacityUnits: 1,
+        WriteCapacityUnits: 1
     }
 };
 
@@ -58,7 +75,9 @@ dynamodb.createTable(usersTable, function (err, data) {
             TableName: "Users",
             Item: {
                 "userId": "USER01",
-                "tickets": [123,456,789]
+                "tickets": [new Date('2018-01-01').getTime(),
+                new Date('2018-02-01').getTime(),
+                new Date('2018-03-01').getTime()]
             }
         };
         

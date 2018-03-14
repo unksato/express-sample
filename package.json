@@ -23,6 +23,7 @@
     "@types/node": "^8.9.5",
     "@types/q": "^1.0.7",
     "@types/source-map-support": "^0.4.0",
+    "@types/uuid": "^3.4.3",
     "grunt": "^1.0.2",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-ts": "^6.0.0-beta.17",
@@ -38,6 +39,7 @@
     "jsonwebtoken": "^8.2.0",
     "log4js": "^2.5.3",
     "proxy-agent": "^2.2.0",
-    "source-map-support": "^0.5.3"
+    "source-map-support": "^0.5.3",
+    "uuid": "^3.2.1"
   }
 }
